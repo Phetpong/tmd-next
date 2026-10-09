@@ -43,6 +43,8 @@ export default function LoginPage() {
               alt="TMD Logo"
               width={64}
               height={64}
+              priority
+              style={{ width: 'auto', height: 'auto' }}
               className="object-contain drop-shadow-md"
             />
           </div>
