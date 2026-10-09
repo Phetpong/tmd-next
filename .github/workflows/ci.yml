@@ -25,6 +25,8 @@ jobs:
       # Ephemeral CI database; never connects to production.
       DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
       DIRECT_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+      NEXTAUTH_SECRET: ci-secret-placeholder-for-build-12345
+      NEXTAUTH_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
