@@ -1,0 +1,8 @@
+.git
+.env*
+prisma/*.db*
+backups
+exports
+docs/previews
+outline.png
+bg.png

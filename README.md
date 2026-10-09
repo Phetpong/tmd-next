@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# ระบบรายงานปริมาณน้ำฝน จังหวัดกำแพงเพชร
 
-## Getting Started
+สร้างรายงาน A4 แนวตั้งจากข้อมูลประจำวัน ใช้พื้นหลัง `public/bg-beautiful.jpg` เลเอาต์คงที่และย่อภาพตัวอย่างตามหน้าจอ
 
-First, run the development server:
+## ใช้งาน
 
-```bash
+1. เปิดระบบและเลือกวันที่รายงาน (เขตเวลา Asia/Bangkok)
+2. เข้าสู่ระบบด้วยบัญชีบทบาท `admin` หรือ `editor` เพื่อกรอกข้อมูล
+3. กรอกตัวเลขไม่ติดลบ ทศนิยมไม่เกิน 1 ตำแหน่ง หรือเลือกไม่มีรายงาน/เครื่องขัดข้อง
+4. บันทึกข้อมูล แล้วดาวน์โหลด PNG ปกติ 1240 × 1754 หรือความละเอียดสูง 2480 × 3508
+
+ไม่มีเวลาตัดยอดและไม่มีการใช้ T/U ข้อมูลเดิมที่ไม่รองรับต้องให้เจ้าหน้าที่ตรวจแก้ก่อนส่งออก ไม่แปลงเป็นศูนย์โดยอัตโนมัติ
+
+## โครงสร้าง
+
+- `lib/rainfall.ts`: สถานี เกณฑ์สี และ validation ที่ใช้ร่วมกัน
+- `components/Dashboard.tsx`: แบบกรอก การโหลด/บันทึก และการส่งออก
+- `components/RainReport.tsx`: แม่แบบ A4 และแผนที่
+- `components/ReportMascot.tsx`: มาสคอตเวกเตอร์
+- `app/api/rainfall/route.ts`: API ข้อมูลรายวัน ตรวจสิทธิ์ และตรวจรุ่นข้อมูลก่อนเขียนทับ
+- `lib/auth.ts`: การตั้งค่า NextAuth ร่วมกันระหว่าง API
+
+ฐานข้อมูล SQLite เดิมยังใช้ได้ ไม่มีการแก้ schema หรือลบข้อมูลเก่า เก็บ `broken` เป็นสถานะเครื่องขัดข้อง และค่าว่าง/`-` เป็นไม่มีรายงาน `X-Report-Revision` จาก GET ต้องส่งกลับเป็น `expectedRevision` ใน POST หากข้อมูลถูกแก้ไขหลังโหลด API ตอบ 409
+
+## ตำแหน่งจุดรายงาน
+
+คง projection, centroid และ offset ของ 11 จุดหลักจากโค้ดเดิม ส่วนโค้ดที่ได้รับมีจุดย่อยเพียงศูนย์วิจัยข้าวฯ ซึ่งไม่ตรงกับรายการภาพอ้างอิง จึงเพิ่มรหัสใหม่ให้ 5 จุดย่อยตามภาพ ไม่ย้ายข้อมูลของศูนย์วิจัยข้าวฯ ไปสวมชื่อจุดอื่น และไม่ลบข้อมูลเดิมออกจากฐานข้อมูล
+
+ตำแหน่งจุดย่อยใหม่เป็น offset ที่เทียบจากภาพ ไม่ใช่พิกัดสำรวจ ควรตรวจเทียบกับระบบต้นฉบับที่เจ้าของระบุว่าจัดตำแหน่งไว้แล้ว โดยปรับเฉพาะค่าของจุดย่อยใน `lib/rainfall.ts` หากมีข้อมูลต้นฉบับเพิ่มเติม
+
+## พัฒนาและตรวจสอบ
+
+```sh
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run start
+npm run lint
+npm test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ชุด unit test ใช้ Node ที่รองรับ TypeScript type stripping และ `--test-isolation=none` (ตรวจด้วย Node 26) ครอบคลุมขอบเขตสี สถานะไม่มีข้อมูล ค่าไม่รองรับ วันที่ และรายการสถานี
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+ตรวจใน Chrome แบบ headless แล้ว: บันทึก/อ่านกลับผ่าน API, สิทธิ์ 401/403, ปฏิเสธ T/U และตัวเลขผิดรูปแบบ, ป้องกันเขียนทับด้วย 409, การบันทึกผ่านหน้าจอ, PNG ทั้งสองขนาด และหน้าจอกว้าง 390 พิกเซล ข้อมูลวันที่ทดสอบถูกลบหลังตรวจเสร็จ
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+ภาพตัวอย่างอยู่ใน `docs/previews/` ส่วน PNG ที่ดาวน์โหลดจริงไม่มีปุ่มหรือช่องกรอกติดไป
 
-## Learn More
+## Deploy ?? GitHub / Vercel / Supabase
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+?? [?????? deployment](docs/DEPLOYMENT.md) ??? `.env.example` ??? Node.js 24 LTS ??????????? `npm ci` ???? generate Prisma Client ????????? ???????????????????????????????????????? build

@@ -3,18 +3,34 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/generate-prisma.cjs && next dev",
+    "build": "node scripts/generate-prisma.cjs && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test --test-isolation=none tests/rainfall.test.mjs",
+    "postinstall": "node scripts/generate-prisma.cjs",
+    "build:vercel": "node scripts/check-deploy-env.cjs && npm run build",
+    "db:generate": "node scripts/generate-prisma.cjs",
+    "db:migrate": "node scripts/database.cjs migrate deploy",
+    "db:status": "node scripts/database.cjs migrate status",
+    "db:seed": "node prisma/seed.js",
+    "db:local": "node scripts/database.cjs local",
+    "db:import-sqlite": "node scripts/import-sqlite.cjs",
+    "deploy:check": "node scripts/check-deploy-env.cjs"
   },
   "dependencies": {
+    "@next/env": "16.4.0",
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "^3.0.3",
     "d3-geo": "^3.1.1",
     "html-to-image": "^1.11.13",
     "lucide-react": "^1.52.0",
     "next": "16.4.0",
+    "next-auth": "^4.24.15",
+    "prisma": "5.22.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "react-hot-toast": "^2.6.1",
     "react-simple-maps": "^5.0.5",
     "react-tooltip": "^6.0.8"
   },
@@ -30,5 +46,8 @@
     "eslint-config-next": "16.4.0",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }
