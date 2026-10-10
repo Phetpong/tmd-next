@@ -1,0 +1,47 @@
+.rain-report .report-map {
+  top: 280px;
+  left: 0;
+  width: 600px;
+  height: 720px;
+  background: #ffffffb8;
+  border-radius: 26px;
+}
+.rain-report .report-map svg {
+  filter: none;
+}
+.rain-report .report-summary {
+  right: 14px;
+  width: 214px;
+  height: 235px;
+  padding: 12px;
+}
+.rain-report .report-summary > svg {
+  width: 32px;
+  height: 32px;
+}
+.rain-report .summary-eyebrow {
+  font-size: 10px;
+}
+.rain-report .report-summary h3 {
+  font-size: 18px;
+}
+.rain-report .report-summary strong {
+  font-size: 36px;
+}
+.rain-report .report-summary small {
+  font-size: 19px;
+}
+.rain-report .report-legend {
+  top: 540px;
+  right: 14px;
+  width: 214px;
+  height: 382px;
+}
+.rain-report .report-legend p {
+  height: 51px;
+  font-size: 12px;
+  gap: 7px;
+}
+.rain-report .report-legend h3 {
+  font-size: 14px;
+}

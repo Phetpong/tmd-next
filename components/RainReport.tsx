@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { forwardRef } from "react";
 import ReportMap from "./ReportMap";
+import "./report-readability.css";
 import { DEFAULT_BACKGROUND, type ReportBackground } from "@/lib/background";
 import { CalendarDays, CloudRain, MapPin, Globe, Phone } from "lucide-react";
 import {
