@@ -7,6 +7,20 @@ import {
   type RainData,
 } from "@/lib/rainfall";
 
+// Label adjustments only; the reporting areas and station anchors stay fixed.
+const labelOffsets: Record<string, [number, number]> = {
+  kpt: [0, 24],
+  "kpt-khlong-khlung": [0, 24],
+  "kpt-pabong": [0, 24],
+  "kpt-bueng-samakkhi": [0, 24],
+  "kpt-pang-sila-thong": [0, 24],
+  "kpt-lan-krabue": [-24, 0],
+  "kpt-kosamphi": [0, 24],
+  "kpt-forest": [24, 0],
+  "kpt-mod-daeng": [24, 0],
+  "kpt-khlong-khayaeng": [0, 24],
+};
+
 export default function ReportMap({ data }: { data: RainData }) {
   return (
     <svg
@@ -44,7 +58,7 @@ export default function ReportMap({ data }: { data: RainData }) {
             ? {
                 x: 1200,
                 y: 205,
-                points: "965,640 1035,425 1060,285 1200,285",
+                points: "965,640 985,390 1060,285 1200,285",
                 name: ["นิคมฯ ทุ่งโพธิ์ทะเล"],
               }
             : area.id === "kpt-tha-phutsa"
@@ -59,8 +73,9 @@ export default function ReportMap({ data }: { data: RainData }) {
           ? "#000000"
           : rainTextColor(rainColor(data[area.id]));
         const name = callout?.name || [station.name];
-        const x = callout?.x ?? area.x;
-        const y = area.id === "kpt-thung-sai" ? 856 : (callout?.y ?? area.y);
+        const [offsetX, offsetY] = labelOffsets[area.id] || [0, 0];
+        const x = (callout?.x ?? area.x) + offsetX;
+        const y = (area.id === "kpt-thung-sai" ? 856 : (callout?.y ?? area.y)) + offsetY;
         return (
           <g key={area.id}>
             {callout && (

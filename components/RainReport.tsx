@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 import ReportMap from "./ReportMap";
 import "./report-readability.css";
 import { DEFAULT_BACKGROUND, type ReportBackground } from "@/lib/background";
-import { CalendarDays, CloudRain, MapPin, Globe, Phone } from "lucide-react";
+import { CalendarDays, MapPin, Globe, Phone } from "lucide-react";
 import {
   STATIONS,
   RAIN_BANDS,
@@ -76,19 +76,17 @@ const RainReport = forwardRef<
       </div>
       <aside
         className="report-summary"
-        style={{ background: summaryBackground, color: summaryText }}
+        style={{ background: "#ffffff", color: "#173b38" }}
       >
-        <CloudRain size={57} strokeWidth={1.5} />
-        <div className="summary-eyebrow">ปริมาณน้ำฝนประจำวันที่รายงาน</div>
         <h3>ปริมาณฝนสูงสุด</h3>
-        <strong>
+        <strong style={{ background: summaryBackground, color: summaryText }}>
           {max === null ? "—" : max.toFixed(1)} <small>มม.</small>
         </strong>
         <p className={winnerText.length > 110 ? "many-winners" : ""}>
           {max === null ? "ยังไม่มีข้อมูลปริมาณฝน" : winnerText}
         </p>
         <span>
-          จากจุดที่รายงาน {reported.length} / {STATIONS.length} จุด
+          รายงานแล้ว {reported.length}/{STATIONS.length} จุด
         </span>
       </aside>
       <section className="report-legend">
@@ -114,8 +112,8 @@ const RainReport = forwardRef<
           src="/report-assets/robot.jpg"
           alt="หุ่นยนต์กรมอุตุนิยมวิทยา"
           style={{
-            width: 150,
-            height: 140,
+            width: 120,
+            height: 112,
             objectFit: "contain",
             background: "white",
             borderRadius: "48%",

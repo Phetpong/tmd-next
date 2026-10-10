@@ -144,7 +144,7 @@ export default function Dashboard() {
         STATIONS.map((s) => [
           s.id,
           numericRain(data[s.id]) === null
-            ? data[s.id]
+            ? ""
             : Number(data[s.id]).toFixed(1),
         ]),
       );
@@ -266,9 +266,11 @@ export default function Dashboard() {
                 โดยสีแต่ละพื้นที่แผนที่อ้างอิงค่าของจุดรายงานนั้น
               </p>
               <p>
-                <b>0.0</b> = ฝนวัดปริมาณไม่ได้ · <b>—</b> = ไม่มีรายงาน
+                กรอกตัวเลขเพื่อแสดงสีตามเกณฑ์ปริมาณฝน
                 <br />
-                <b>ขัดข้อง</b> = เครื่องวัดฝนขัดข้อง
+                <b>เว้นว่าง</b> = ไม่มีข้อมูล แสดงสีเทาและเครื่องหมาย —
+                <br />
+                <b>0.0</b> = มีข้อมูลค่า 0 แสดงสีขาว
               </p>
             </section>
             <div className="save-status" role="status">
@@ -324,34 +326,10 @@ export default function Dashboard() {
                                 ? data[s.id]
                                 : ""
                             }
-                            placeholder="มม."
-                            disabled={data[s.id] === "broken"}
+                            placeholder="เว้นว่าง = ไม่มีข้อมูล"
+                            style={{ width: "100%" }}
                             onChange={(e) => change(s.id, e.target.value)}
                           />
-                          <select
-                            aria-label={`สถานะ ${s.name}`}
-                            value={
-                              data[s.id] === "broken"
-                                ? "broken"
-                                : data[s.id] === "" || data[s.id] === "-"
-                                  ? "missing"
-                                  : "measured"
-                            }
-                            onChange={(e) =>
-                              change(
-                                s.id,
-                                e.target.value === "measured"
-                                  ? "0.0"
-                                  : e.target.value === "broken"
-                                    ? "broken"
-                                    : "",
-                              )
-                            }
-                          >
-                            <option value="measured">มีข้อมูล</option>
-                            <option value="missing">ไม่มีรายงาน</option>
-                            <option value="broken">เครื่องขัดข้อง</option>
-                          </select>
                         </div>
                       </div>
                     ),

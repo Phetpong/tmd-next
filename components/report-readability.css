@@ -1,19 +1,23 @@
 .rain-report .report-map {
   top: 280px;
   left: 0;
-  width: 600px;
+  width: 650px;
   height: 720px;
-  background: #ffffffb8;
+  background: transparent;
   border-radius: 26px;
 }
 .rain-report .report-map svg {
   filter: none;
 }
 .rain-report .report-summary {
-  right: 14px;
-  width: 214px;
-  height: 235px;
-  padding: 12px;
+  right: 10px;
+  width: 174px;
+  height: auto;
+  min-height: 162px;
+  padding: 10px;
+  border: 1px solid #cbdcd4;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px #143c2920;
 }
 .rain-report .report-summary > svg {
   width: 32px;
@@ -23,19 +27,27 @@
   font-size: 10px;
 }
 .rain-report .report-summary h3 {
-  font-size: 18px;
+  font-size: 16px;
+  margin: 0 0 9px;
 }
 .rain-report .report-summary strong {
-  font-size: 36px;
+  font-size: 32px;
+  border-radius: 8px;
+  padding: 5px 8px;
+  line-height: 1.3;
 }
 .rain-report .report-summary small {
-  font-size: 19px;
+  font-size: 15px;
 }
+.rain-report .report-summary p { margin: 9px 0 6px; font-size: 15px; line-height: 1.4; }
+.rain-report .report-summary > span { color: #526b60; font-size: 10px; }
 .rain-report .report-legend {
-  top: 540px;
-  right: 14px;
-  width: 214px;
+  top: auto;
+  bottom: 124px;
+  right: 10px;
+  width: 174px;
   height: 382px;
+  padding: 5px;
 }
 .rain-report .report-legend p {
   height: 51px;
@@ -44,4 +56,13 @@
 }
 .rain-report .report-legend h3 {
   font-size: 14px;
+}
+.rain-report .report-legend > div { padding: 8px 3px; }
+.rain-report .report-legend i { width: 22px; height: 27px; border-radius: 5px; }
+.rain-report .report-decoration {
+  left: 32px;
+  right: auto;
+  top: 952px;
+  width: 120px;
+  height: 116px;
 }
