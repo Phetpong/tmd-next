@@ -131,12 +131,36 @@ export const STATIONS = [
 ];
 
 export const RAIN_BANDS = [
-  { max: 10, color: "#ffffff", label: "0 – 10.0 มม." },
-  { max: 35, color: "#b8f5b1", label: "10.1 – 35.0 มม." },
-  { max: 65, color: "#ffff00", label: "35.1 – 65.0 มม." },
-  { max: 125, color: "#ffa500", label: "65.1 – 125.0 มม." },
-  { max: 250, color: "#ff0000", label: "125.1 – 250.0 มม." },
-  { max: Infinity, color: "#9900b3", label: "> 250.0 มม." },
+  {
+    max: 0,
+    color: "#ffffff",
+    label: "0.0 มม.",
+    description: "ฝนวัดปริมาณไม่ได้",
+  },
+  {
+    max: 10,
+    color: "#00cc33",
+    label: "0.1 – 10.0 มม.",
+    description: "ฝนเล็กน้อย",
+  },
+  {
+    max: 35,
+    color: "#ffff00",
+    label: "10.1 – 35.0 มม.",
+    description: "ฝนปานกลาง",
+  },
+  {
+    max: 90,
+    color: "#ffa500",
+    label: "35.1 – 90.0 มม.",
+    description: "ฝนหนัก",
+  },
+  {
+    max: Infinity,
+    color: "#ff0000",
+    label: "90.1 มม. ขึ้นไป",
+    description: "ฝนหนักมาก",
+  },
 ];
 export type RainData = Record<string, string>;
 export const emptyData = (): RainData =>
@@ -159,7 +183,7 @@ export function validValue(value: unknown): value is string {
 }
 export function rainColor(value: unknown) {
   const n = numericRain(value);
-  return n === null ? "#ffffff" : RAIN_BANDS.find((b) => n <= b.max)!.color;
+  return n === null ? "#999999" : RAIN_BANDS.find((b) => n <= b.max)!.color;
 }
 // Choose the higher-contrast text color, including on bright red and yellow.
 export function rainTextColor(background: string) {
@@ -175,7 +199,7 @@ export function rainTextColor(background: string) {
 }
 export function rainLabel(value: unknown) {
   const n = numericRain(value);
-  return n !== null ? n.toFixed(1) : value === "broken" ? "ขัดข้อง" : "—";
+  return n !== null ? n.toFixed(1) : "—";
 }
 export function validDate(date: unknown): date is string {
   if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date))
@@ -197,6 +221,7 @@ export function bangkokDate() {
 export function thaiDate(date: string) {
   return new Date(date + "T12:00:00+07:00").toLocaleDateString("th-TH", {
     timeZone: "Asia/Bangkok",
+    weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",

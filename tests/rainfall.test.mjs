@@ -27,16 +27,17 @@ test("summary text has at least 4.5:1 contrast on every rainfall color", () => {
 test("all rainfall band boundaries match the approved legend", () => {
   for (const [value, color] of [
     ["0.0", "#ffffff"],
-    ["10.0", "#ffffff"],
-    ["10.1", "#b8f5b1"],
-    ["35.0", "#b8f5b1"],
-    ["35.1", "#ffff00"],
-    ["65.0", "#ffff00"],
-    ["65.1", "#ffa500"],
-    ["125.0", "#ffa500"],
-    ["125.1", "#ff0000"],
+    ["0.1", "#00cc33"],
+    ["10.0", "#00cc33"],
+    ["10.1", "#ffff00"],
+    ["35.0", "#ffff00"],
+    ["35.1", "#ffa500"],
+    ["90.0", "#ffa500"],
+    ["90.1", "#ff0000"],
     ["250.0", "#ff0000"],
-    ["250.1", "#9900b3"],
+    ["250.1", "#ff0000"],
+    ["", "#999999"],
+    ["broken", "#999999"],
   ])
     assert.equal(rainColor(value), color, value);
 });
@@ -60,7 +61,7 @@ test("missing and broken are not zero; obsolete and invalid values are rejected"
   assert.equal(numericRain("0"), 0);
   assert.equal(rainLabel("0"), "0.0");
   assert.equal(rainLabel(""), "—");
-  assert.equal(rainLabel("broken"), "ขัดข้อง");
+  assert.equal(rainLabel("broken"), "—");
 });
 test("dates reject nonexistent calendar days", () => {
   assert.equal(validDate("2026-02-29"), false);

@@ -7,7 +7,7 @@
     "build": "node scripts/generate-prisma.cjs && next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test --test-isolation=none tests/rainfall.test.mjs",
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
     "postinstall": "node scripts/generate-prisma.cjs",
     "build:vercel": "node scripts/check-deploy-env.cjs && npm run build",
     "db:generate": "node scripts/generate-prisma.cjs",
@@ -16,11 +16,13 @@
     "db:seed": "node prisma/seed.js",
     "db:local": "node scripts/database.cjs local",
     "db:import-sqlite": "node scripts/import-sqlite.cjs",
-    "deploy:check": "node scripts/check-deploy-env.cjs"
+    "deploy:check": "node scripts/check-deploy-env.cjs",
+    "storage:setup": "node scripts/setup-background-storage.cjs"
   },
   "dependencies": {
     "@next/env": "16.4.0",
     "@prisma/client": "5.22.0",
+    "@supabase/supabase-js": "2.117.3",
     "@vercel/speed-insights": "^2.0.0",
     "bcryptjs": "^3.0.3",
     "d3-geo": "^3.1.1",
@@ -33,7 +35,8 @@
     "react-dom": "19.3.0",
     "react-hot-toast": "^2.6.1",
     "react-simple-maps": "^5.0.5",
-    "react-tooltip": "^6.0.8"
+    "react-tooltip": "^6.0.8",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

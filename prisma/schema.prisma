@@ -24,3 +24,12 @@ model RainfallRecord {
 
   @@unique([date, stationId])
 }
+
+model ReportAppearance {
+  id        String @id @default("default")
+  path      String?
+  positionX Int @default(50)
+  positionY Int @default(50)
+  wash      Int @default(0)
+  revision  Int @default(0)
+}

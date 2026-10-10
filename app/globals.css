@@ -700,3 +700,196 @@ body {
   height: 155px;
   filter: drop-shadow(0 4px 3px #132a2740);
 }
+
+/* V2: fixed print layout, independent reporting areas and original identity assets. */
+.background-wash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  z-index: -1;
+  pointer-events: none;
+}
+.report-heading {
+  top: 22px;
+  left: 22px;
+  right: 22px;
+  height: 120px;
+  gap: 10px;
+}
+.report-logo {
+  width: 126px;
+  height: 115px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.report-title h1 {
+  font-size: 44px;
+  color: #005030;
+  line-height: 1.5;
+  -webkit-text-stroke: 1px white;
+  paint-order: stroke fill;
+  text-shadow:
+    0 3px 0 white,
+    0 5px 8px #00332445;
+}
+.report-date {
+  top: 145px;
+  left: 166px;
+  width: 508px;
+  font-size: 24px;
+}
+.report-location {
+  top: 217px;
+  font-size: 20px;
+  background: #eaffdbef;
+}
+.report-map {
+  top: 280px;
+  left: 0;
+  width: 535px;
+  height: 720px;
+}
+.report-map svg {
+  height: 685px;
+}
+.report-summary {
+  top: 290px;
+  right: 18px;
+  width: 284px;
+  height: 280px;
+  padding: 15px;
+}
+.report-summary p {
+  font-size: 14px;
+  max-height: 107px;
+  overflow: auto;
+}
+.report-summary p.many-winners {
+  font-size: 11px;
+  line-height: 1.5;
+}
+.report-summary h3 {
+  font-size: 21px;
+}
+.report-summary strong {
+  font-size: 43px;
+}
+.report-legend {
+  top: 585px;
+  right: 18px;
+  width: 284px;
+  height: 337px;
+}
+.report-legend > div {
+  padding: 8px;
+}
+.report-legend p {
+  height: 43px;
+  font-size: 13px;
+  gap: 9px;
+}
+.report-legend small {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+.report-legend h3 {
+  font-size: 17px;
+  padding: 10px 0;
+}
+.missing-swatch {
+  background: #999999;
+}
+.report-decoration {
+  right: 48px;
+  top: 930px;
+  width: 210px;
+  height: 140px;
+}
+.report-decoration img {
+  width: 150px;
+  height: 140px;
+  object-fit: contain;
+  background: white;
+  border-radius: 48%;
+  padding: 6px;
+  box-shadow: 0 0 16px 10px #ffffffb0;
+}
+.background-editor {
+  background: white;
+  border: 1px solid #c9ddd1;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 0 auto 20px;
+  max-width: 980px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.background-editor summary {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  color: #076548;
+}
+.background-editor summary span {
+  font-size: 11px;
+  font-weight: 400;
+  margin-left: 8px;
+}
+.background-editor p {
+  margin: 12px 0;
+}
+.background-guidance {
+  background: #eef7f1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+.background-guidance ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+.background-file {
+  display: block;
+  font-weight: 700;
+}
+.background-file input {
+  display: block;
+  margin: 8px 0 16px;
+  max-width: 100%;
+}
+.background-sliders {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.background-sliders input {
+  display: block;
+  width: 100%;
+  accent-color: #076548;
+}
+.background-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.background-actions button {
+  padding: 9px 12px;
+  border: 1px solid #b6cdbf;
+  border-radius: 7px;
+}
+.background-actions button:first-child {
+  background: #076548;
+  color: white;
+}
+.background-warning {
+  color: #865310;
+}
+@media (max-width: 700px) {
+  .background-sliders {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

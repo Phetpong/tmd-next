@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useEffect, useRef, useState } from "react";
-import type { FeatureCollection } from "geojson";
+import BackgroundEditor from "./BackgroundEditor";
+import { DEFAULT_BACKGROUND, type ReportBackground } from "@/lib/background";
 import { useSession, signOut } from "next-auth/react";
 import { toPng } from "html-to-image";
 import { toast, Toaster } from "react-hot-toast";
@@ -30,7 +31,11 @@ export default function Dashboard() {
   const canEdit = role === "admin" || role === "editor";
   const [date, setDate] = useState("");
   const [data, setData] = useState<RainData>(emptyData);
-  const [geo, setGeo] = useState<FeatureCollection | null>(null);
+  const [background, setBackground] =
+    useState<ReportBackground>(DEFAULT_BACKGROUND);
+  const [storageReady, setStorageReady] = useState(false);
+  const [draftBackground, setDraftBackground] =
+    useState<ReportBackground | null>(null);
   const [dirty, setDirty] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -42,7 +47,7 @@ export default function Dashboard() {
   const [scale, setScale] = useState(1);
   const report = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
-  const busy = saving || exporting;
+  const busy = saving || exporting || draftBackground !== null;
   useEffect(() => {
     const timer = window.setTimeout(() => setDate(bangkokDate()), 0);
     return () => window.clearTimeout(timer);
@@ -55,17 +60,21 @@ export default function Dashboard() {
         signal: controller.signal,
         cache: "no-store",
       }),
-      fetch("/kamphaengphet.geojson", { signal: controller.signal }),
+      fetch("/api/report-background", {
+        signal: controller.signal,
+        cache: "no-store",
+      }),
     ])
       .then(async ([response, mapResponse]) => {
         if (!response.ok || !mapResponse.ok)
           throw new Error("ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่");
         const values: RainData = await response.json();
-        const geography: FeatureCollection = await mapResponse.json();
+        const appearance = await mapResponse.json();
         if (!controller.signal.aborted) {
           setRevision(response.headers.get("X-Report-Revision") || "");
           setConflict(false);
-          setGeo(geography);
+          setBackground(appearance.background);
+          setStorageReady(appearance.configured);
           setData({ ...emptyData(), ...values });
           setDirty(false);
           setLoading(false);
@@ -190,6 +199,8 @@ export default function Dashboard() {
         canvasWidth: high ? 2480 : 1240,
         canvasHeight: high ? 3508 : 1754,
         pixelRatio: 1,
+        cacheBust: true,
+        includeQueryParams: true,
         style: { transform: "none", margin: "0" },
       });
       const link = document.createElement("a");
@@ -252,10 +263,10 @@ export default function Dashboard() {
               <h3>คำแนะนำสำหรับผู้บันทึก</h3>
               <p>
                 บันทึกปริมาณน้ำฝนของวันที่เลือก
-                โดยสีพื้นที่แผนที่อ้างอิงจุดรายงานหลักของแต่ละอำเภอ
+                โดยสีแต่ละพื้นที่แผนที่อ้างอิงค่าของจุดรายงานนั้น
               </p>
               <p>
-                <b>0.0</b> = ไม่มีฝน · <b>—</b> = ไม่มีรายงาน
+                <b>0.0</b> = ฝนวัดปริมาณไม่ได้ · <b>—</b> = ไม่มีรายงาน
                 <br />
                 <b>ขัดข้อง</b> = เครื่องวัดฝนขัดข้อง
               </p>
@@ -359,6 +370,18 @@ export default function Dashboard() {
           </aside>
         )}
         <main className="preview-panel">
+          {role === "admin" && (
+            <BackgroundEditor
+              current={background}
+              storageReady={storageReady}
+              disabled={saving || exporting}
+              onPreview={setDraftBackground}
+              onSaved={(value) => {
+                setBackground(value);
+                setDraftBackground(null);
+              }}
+            />
+          )}
           <div className="preview-toolbar">
             <div className="date-controls">
               <button
@@ -426,8 +449,7 @@ export default function Dashboard() {
                 </button>
               </div>
             ) : (
-              date &&
-              geo && (
+              date && (
                 <div
                   style={{
                     width: 840 * scale,
@@ -446,7 +468,7 @@ export default function Dashboard() {
                       ref={report}
                       date={date}
                       data={data}
-                      geo={geo}
+                      background={draftBackground || background}
                     />
                   </div>
                 </div>
