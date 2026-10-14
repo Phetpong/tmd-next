@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { STATIONS, validDate, validValue, numericRain } from "@/lib/rainfall";
+import { STATIONS, validDate, validValue, normalizeRain } from "@/lib/rainfall";
 import { createHash } from "node:crypto";
 
 function revision(
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "กรุณาตรวจสถานีและค่าฝน ต้องเป็นตัวเลขไม่ติดลบ ทศนิยมไม่เกิน 1 ตำแหน่ง",
+            "กรุณาตรวจสถานีและค่าฝน: ตัวเลขไม่ติดลบ ทศนิยมไม่เกิน 1 ตำแหน่ง, T หรือเว้นว่าง",
         },
         { status: 400 },
       );
@@ -110,8 +110,7 @@ export async function POST(req: NextRequest) {
       const existing = await tx.rainfallRecord.findMany({ where: { date } });
       if (revision(existing) !== expectedRevision) return null;
       for (const [stationId, value] of Object.entries(data)) {
-        const n = numericRain(value);
-        const val = n === null ? (value as string) : n.toFixed(1);
+        const val = normalizeRain(value as string);
         await tx.rainfallRecord.upsert({
           where: {
             date_stationId: {

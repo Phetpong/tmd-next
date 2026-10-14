@@ -8,7 +8,7 @@ import { CalendarDays, MapPin, Globe, Phone } from "lucide-react";
 import {
   STATIONS,
   RAIN_BANDS,
-  numericRain,
+  rainSummary,
   rainColor,
   rainTextColor,
   thaiDate,
@@ -18,11 +18,7 @@ const RainReport = forwardRef<
   HTMLDivElement,
   { date: string; data: RainData; background?: ReportBackground }
 >(function RainReport({ date, data, background = DEFAULT_BACKGROUND }, ref) {
-  const reported = STATIONS.filter((s) => numericRain(data[s.id]) !== null);
-  const max = reported.length
-    ? Math.max(...reported.map((s) => numericRain(data[s.id])!))
-    : null;
-  const winners = reported.filter((s) => numericRain(data[s.id]) === max);
+  const { max, winners, reportedCount, traceCount } = rainSummary(data);
   const summaryBackground = rainColor(max === null ? "" : max.toFixed(1));
   const summaryText = rainTextColor(summaryBackground);
   const winnerText =
@@ -79,14 +75,16 @@ const RainReport = forwardRef<
         style={{ background: "#ffffff", color: "#173b38" }}
       >
         <h3>ปริมาณฝนสูงสุด</h3>
+        {traceCount > 0 && <span>จากจุดที่มีค่าตัวเลข</span>}
         <strong style={{ background: summaryBackground, color: summaryText }}>
           {max === null ? "—" : max.toFixed(1)} <small>มม.</small>
         </strong>
         <p className={winnerText.length > 110 ? "many-winners" : ""}>
-          {max === null ? "ยังไม่มีข้อมูลปริมาณฝน" : winnerText}
+          {max === null ? "ไม่มีค่าตัวเลขสำหรับคำนวณฝนสูงสุด" : winnerText}
         </p>
         <span>
-          รายงานแล้ว {reported.length}/{STATIONS.length} จุด
+          รายงานแล้ว {reportedCount}/{STATIONS.length} จุด
+          {traceCount > 0 && <><br />วัดปริมาณไม่ได้ {traceCount} จุด</>}
         </span>
       </aside>
       <section className="report-legend">
@@ -101,6 +99,10 @@ const RainReport = forwardRef<
               </span>
             </p>
           ))}
+          <p>
+            <i style={{ background: "#ffffff", color: "#000000", fontStyle: "normal", textAlign: "center" }}>T</i>
+            <span>T<small>ฝนวัดปริมาณไม่ได้</small></span>
+          </p>
           <p>
             <i className="missing-swatch" />
             <span>ไม่มีรายงาน / เครื่องวัดฝนขัดข้อง</span>

@@ -135,7 +135,7 @@ export const RAIN_BANDS = [
     max: 0,
     color: "#ffffff",
     label: "0.0 มม.",
-    description: "ฝนวัดปริมาณไม่ได้",
+    description: "ไม่มีฝน",
   },
   {
     max: 10,
@@ -165,6 +165,27 @@ export const RAIN_BANDS = [
 export type RainData = Record<string, string>;
 export const emptyData = (): RainData =>
   Object.fromEntries(STATIONS.map((s) => [s.id, ""]));
+export function isTrace(value: unknown): boolean {
+  return value === "T" || value === "t";
+}
+export function normalizeRain(value: string): string {
+  if (isTrace(value)) return "T";
+  const n = numericRain(value);
+  return n === null ? "" : n.toFixed(1);
+}
+export function rainSummary(data: RainData) {
+  const measured = STATIONS.filter((s) => numericRain(data[s.id]) !== null);
+  const traceCount = STATIONS.filter((s) => isTrace(data[s.id])).length;
+  const max = measured.length
+    ? Math.max(...measured.map((s) => numericRain(data[s.id])!))
+    : null;
+  return {
+    max,
+    traceCount,
+    reportedCount: measured.length + traceCount,
+    winners: measured.filter((s) => numericRain(data[s.id]) === max),
+  };
+}
 export function numericRain(value: unknown): number | null {
   return typeof value === "string" &&
     /^\d+(\.\d)?$/.test(value) &&
@@ -175,6 +196,7 @@ export function numericRain(value: unknown): number | null {
 }
 export function validValue(value: unknown): value is string {
   return (
+    isTrace(value) ||
     value === "" ||
     value === "-" ||
     value === "broken" ||
@@ -182,6 +204,7 @@ export function validValue(value: unknown): value is string {
   );
 }
 export function rainColor(value: unknown) {
+  if (isTrace(value)) return "#ffffff";
   const n = numericRain(value);
   return n === null ? "#999999" : RAIN_BANDS.find((b) => n <= b.max)!.color;
 }
@@ -198,6 +221,7 @@ export function rainTextColor(background: string) {
     : "#ffffff";
 }
 export function rainLabel(value: unknown) {
+  if (isTrace(value)) return "T";
   const n = numericRain(value);
   return n !== null ? n.toFixed(1) : "—";
 }

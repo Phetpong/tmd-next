@@ -9,6 +9,9 @@ import {
   validValue,
   rainLabel,
   STATIONS,
+  normalizeRain,
+  rainSummary,
+  emptyData,
 } from "../lib/rainfall.ts";
 test("summary text has at least 4.5:1 contrast on every rainfall color", () => {
   function luminance(hex) {
@@ -56,12 +59,36 @@ test("missing and broken are not zero; obsolete and invalid values are rejected"
     "9".repeat(50),
   ])
     assert.equal(numericRain(value), null);
-  for (const value of ["T", "U", "-1", "10.05", null, {}, 0])
+  for (const value of ["U", "u", "-1", "10.05", null, {}, 0])
     assert.equal(validValue(value), false);
   assert.equal(numericRain("0"), 0);
   assert.equal(rainLabel("0"), "0.0");
   assert.equal(rainLabel(""), "—");
   assert.equal(rainLabel("broken"), "—");
+});
+test("trace survives saving and display without becoming zero or missing", () => {
+  for (const value of ["T", "t"]) {
+    assert.equal(validValue(value), true);
+    assert.equal(normalizeRain(value), "T");
+    assert.equal(rainLabel(normalizeRain(value)), "T");
+    assert.equal(rainColor(value), "#ffffff");
+    assert.equal(numericRain(value), null);
+  }
+  assert.equal(normalizeRain("0"), "0.0");
+  assert.equal(RAIN_BANDS[0].description, "ไม่มีฝน");
+});
+test("summary counts trace reports but ranks only measured values", () => {
+  const data = { ...emptyData(), kpt: "T", "kpt-forest": "0", "kpt-khanu": "90.1" };
+  const summary = rainSummary(data);
+  assert.equal(summary.reportedCount, 3);
+  assert.equal(summary.traceCount, 1);
+  assert.equal(summary.max, 90.1);
+  assert.deepEqual(summary.winners.map(s => s.id), ["kpt-khanu"]);
+  const onlyTrace = rainSummary(Object.fromEntries(STATIONS.map(s => [s.id, "T"])));
+  assert.equal(onlyTrace.max, null);
+  assert.equal(onlyTrace.reportedCount, 16);
+  assert.deepEqual(onlyTrace.winners, []);
+  assert.equal(rainSummary(emptyData()).reportedCount, 0);
 });
 test("dates reject nonexistent calendar days", () => {
   assert.equal(validDate("2026-02-29"), false);

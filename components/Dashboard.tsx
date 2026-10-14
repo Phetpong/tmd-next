@@ -19,6 +19,8 @@ import {
   STATIONS,
   emptyData,
   numericRain,
+  isTrace,
+  normalizeRain,
   rainColor,
   validDate,
   validValue,
@@ -126,7 +128,7 @@ export default function Dashboard() {
     selectDate(d.toISOString().slice(0, 10));
   }
   function change(id: string, value: string) {
-    setData((previous) => ({ ...previous, [id]: value }));
+    setData((previous) => ({ ...previous, [id]: value.toUpperCase() }));
     setDirty(true);
   }
   async function save() {
@@ -134,7 +136,7 @@ export default function Dashboard() {
     const invalid = STATIONS.find((s) => !validValue(data[s.id]));
     if (invalid) {
       toast.error(
-        `ตรวจสอบค่า ${invalid.name}: ตัวเลขไม่ติดลบ ทศนิยมไม่เกิน 1 ตำแหน่ง`,
+        `ตรวจสอบค่า ${invalid.name}: ตัวเลขไม่ติดลบ ทศนิยมไม่เกิน 1 ตำแหน่ง, T หรือเว้นว่าง`,
       );
       return false;
     }
@@ -143,9 +145,7 @@ export default function Dashboard() {
       const values = Object.fromEntries(
         STATIONS.map((s) => [
           s.id,
-          numericRain(data[s.id]) === null
-            ? ""
-            : Number(data[s.id]).toFixed(1),
+          normalizeRain(data[s.id]),
         ]),
       );
       const response = await fetch("/api/rainfall", {
@@ -253,7 +253,7 @@ export default function Dashboard() {
               <p>
                 กรอกปริมาณฝนเป็นมิลลิเมตร
                 <br />
-                ทศนิยมไม่เกิน 1 ตำแหน่ง
+                ทศนิยมไม่เกิน 1 ตำแหน่ง หรือ T
               </p>
             </div>
             <section
@@ -270,7 +270,9 @@ export default function Dashboard() {
                 <br />
                 <b>เว้นว่าง</b> = ไม่มีข้อมูล แสดงสีเทาและเครื่องหมาย —
                 <br />
-                <b>0.0</b> = มีข้อมูลค่า 0 แสดงสีขาว
+                <b>0.0</b> = ไม่มีฝน แสดงสีขาว
+                <br />
+                <b>T</b> = ฝนวัดปริมาณไม่ได้ แสดงสีขาวและตัวอักษร T
               </p>
             </section>
             <div className="save-status" role="status">
@@ -319,9 +321,12 @@ export default function Dashboard() {
                           <input
                             id={s.id}
                             aria-invalid={!validValue(data[s.id])}
-                            inputMode="decimal"
+                            inputMode="text"
+                            autoCapitalize="characters"
+                            spellCheck={false}
                             value={
                               numericRain(data[s.id]) !== null ||
+                              isTrace(data[s.id]) ||
                               !validValue(data[s.id])
                                 ? data[s.id]
                                 : ""
